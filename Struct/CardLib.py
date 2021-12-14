@@ -1,16 +1,21 @@
+import random
+
 class Card:
 	def __init__(self, suit, rank):
 		self.suit = suit
 		self.rank = rank
+
+	def __str__(self):
+		return self.get_rank() + " of " + self.get_suit()
+
+	def __int__(self):
+		return (self.rank * 13) + self.rank
 
 	def get_suit_no(self):
 		return self.suit
 
 	def get_rank_no(self):
 		return self.rank
-
-	def get_card_no(self):
-		return (self.rank * 13) + self.rank
 
 	def get_suit(self):
 		if self.suit == 0:
@@ -52,5 +57,18 @@ class Card:
 		elif self.rank == 12:
 			return "ace"
 
-	def get_card(self):
-		return self.get_rank() + "of" + self.get_suit()
+
+class Deck:
+	def __init__(self):
+		self. cards = []
+
+	def generate_standard_deck(self):
+		for i in range(0, 4):
+			for j in range(0, 13):
+				self.cards.append(Card(i, j))
+
+	def shuffle(self):
+		random.shuffle(self.cards)
+
+	def draw(self):
+		return self.cards.pop()
