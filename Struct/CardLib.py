@@ -72,3 +72,19 @@ class Deck:
 
 	def draw(self):
 		return self.cards.pop()
+
+	def deal(self, no_players, no_cards):
+		# hands
+		hs = []
+		for i in range(no_players):
+			# hand
+			h = []
+			for j in range(no_cards):
+				h.append(self.draw())
+			hs.append(h)
+		return hs
+
+	def setup(self, no_players, no_cards):
+		self.generate_standard_deck()
+		self.shuffle()
+		return self.deal(no_players, no_cards)
