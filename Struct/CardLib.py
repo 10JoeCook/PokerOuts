@@ -1,4 +1,5 @@
 import random
+from functools import cmp_to_key
 
 
 class Card:
@@ -89,3 +90,43 @@ class Deck:
 		self.generate_standard_deck()
 		self.shuffle()
 		return self.deal(no_players, no_cards)
+
+
+class HandRanker:
+	@staticmethod
+	def rank_hand(hand: [Card]):
+		if HandRanker.is_royal_flush(hand):
+			print("Royal Flush")
+			return 0
+		elif HandRanker.are_consecutive(hand) and HandRanker.share_suit(hand):
+			print("Straight Flush")
+			return 1
+		# quads
+		# full house
+		elif HandRanker.share_suit(hand):
+			print("Flush")
+		elif HandRanker.are_consecutive(hand):
+			print("straight")
+
+	@staticmethod
+	def are_consecutive(cards: [Card]) -> bool:
+		crds = sorted(cards, key=cmp_to_key(lambda item1, item2: item1.get_rank_no() - item2.get_rank_no()))
+		for i in range(len(cards) - 1):
+			if not(crds[i].get_rank_no() + 1 == crds[i + 1].get_rank_no() or (crds[i].get_rank_no() == 3 and crds[i + 1].get_rank_no() == 12)):
+				return False
+		return True
+
+	@staticmethod
+	def share_suit(cards: [Card]) -> bool:
+		s = cards[0].get_suit_no()
+		for i in range(len(cards)):
+			if cards[i].get_suit_no() != s:
+				return False
+		return True
+
+	@staticmethod
+	def is_royal_flush(cards: [Card]) -> bool:
+		if HandRanker.are_consecutive(cards) and HandRanker.share_suit(cards):
+			if sorted(cards, key=cmp_to_key(lambda item1, item2: item1.get_rank_no() - item2.get_rank_no()))[0].get_rank_no() == 8:
+				return True
+		return False
