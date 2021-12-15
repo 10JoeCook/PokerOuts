@@ -1,23 +1,24 @@
 import random
 
+
 class Card:
-	def __init__(self, suit, rank):
+	def __init__(self, suit: int, rank: int) -> None:
 		self.suit = suit
 		self.rank = rank
 
-	def __str__(self):
+	def __str__(self) -> str:
 		return self.get_rank() + " of " + self.get_suit()
 
-	def __int__(self):
+	def __int__(self) -> int:
 		return (self.rank * 13) + self.rank
 
-	def get_suit_no(self):
+	def get_suit_no(self) -> int:
 		return self.suit
 
-	def get_rank_no(self):
+	def get_rank_no(self) -> int:
 		return self.rank
 
-	def get_suit(self):
+	def get_suit(self) -> str:
 		if self.suit == 0:
 			return "clubs"
 		elif self.suit == 1:
@@ -29,7 +30,7 @@ class Card:
 		else:
 			return "Error"
 
-	def get_rank(self):
+	def get_rank(self) -> str:
 		if self.rank == 0:
 			return "two"
 		elif self.rank == 1:
@@ -59,21 +60,21 @@ class Card:
 
 
 class Deck:
-	def __init__(self):
+	def __init__(self) -> None:
 		self. cards = []
 
-	def generate_standard_deck(self):
+	def generate_standard_deck(self) -> None:
 		for i in range(0, 4):
 			for j in range(0, 13):
 				self.cards.append(Card(i, j))
 
-	def shuffle(self):
+	def shuffle(self) -> None:
 		random.shuffle(self.cards)
 
-	def draw(self):
+	def draw(self) -> Card:
 		return self.cards.pop()
 
-	def deal(self, no_players, no_cards):
+	def deal(self, no_players: int, no_cards: int) -> [[Card]]:
 		# hands
 		hs = []
 		for i in range(no_players):
@@ -84,7 +85,7 @@ class Deck:
 			hs.append(h)
 		return hs
 
-	def setup(self, no_players, no_cards):
+	def setup(self, no_players: int, no_cards: int) -> [[Card]]:
 		self.generate_standard_deck()
 		self.shuffle()
 		return self.deal(no_players, no_cards)
