@@ -102,6 +102,14 @@ class CardUtils:
 			return "spades"
 		raise ValueError("Invalid suit_no")
 
+	@staticmethod
+	def find_highest(cards: [Card]) -> Card:
+		highest_card = cards[0]
+		for card in cards:
+			if int(card) > int(highest_card):
+				highest_card = card
+		return highest_card
+
 
 class HandUtils:
 	@staticmethod
