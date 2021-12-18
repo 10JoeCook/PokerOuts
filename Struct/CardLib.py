@@ -21,44 +21,10 @@ class Card:
 		return self.rank
 
 	def get_suit(self) -> str:
-		if self.suit == 0:
-			return "clubs"
-		elif self.suit == 1:
-			return "diamonds"
-		elif self.suit == 2:
-			return "hearts"
-		elif self.suit == 3:
-			return "spades"
-		else:
-			return "Error"
+		return CardUtils.suit_no_to_name(self.suit)
 
 	def get_rank(self) -> str:
-		if self.rank == 0:
-			return "two"
-		elif self.rank == 1:
-			return "three"
-		elif self.rank == 2:
-			return "four"
-		elif self.rank == 3:
-			return "five"
-		elif self.rank == 4:
-			return "six"
-		elif self.rank == 5:
-			return "seven"
-		elif self.rank == 6:
-			return "eight"
-		elif self.rank == 7:
-			return "nine"
-		elif self.rank == 8:
-			return "ten"
-		elif self.rank == 9:
-			return "jack"
-		elif self.rank == 10:
-			return "queen"
-		elif self.rank == 11:
-			return "king"
-		elif self.rank == 12:
-			return "ace"
+		return CardUtils.rank_no_to_name(self.rank)
 
 
 class Deck:
@@ -91,6 +57,50 @@ class Deck:
 		self.generate_standard_deck()
 		self.shuffle()
 		return self.deal(no_players, no_cards)
+
+
+class CardUtils:
+	@staticmethod
+	def rank_no_to_name(rank_no: int) -> str:
+		if rank_no == 0:
+			return "two"
+		elif rank_no == 1:
+			return "three"
+		elif rank_no == 2:
+			return "four"
+		elif rank_no == 3:
+			return "five"
+		elif rank_no == 4:
+			return "six"
+		elif rank_no == 5:
+			return "seven"
+		elif rank_no == 6:
+			return "eight"
+		elif rank_no == 7:
+			return "nine"
+		elif rank_no == 8:
+			return "ten"
+		elif rank_no == 9:
+			return "jack"
+		elif rank_no == 10:
+			return "queen"
+		elif rank_no == 11:
+			return "king"
+		elif rank_no == 12:
+			return "ace"
+		raise ValueError('invalid rank_no')
+
+	@staticmethod
+	def suit_no_to_name(suit_no: int) -> str:
+		if suit_no == 0:
+			return "clubs"
+		if suit_no == 1:
+			return "diamonds"
+		if suit_no == 2:
+			return "hearts"
+		if suit_no == 3:
+			return "spades"
+		raise ValueError("Invalid suit_no")
 
 
 class HandUtils:
@@ -153,7 +163,7 @@ class HandUtils:
 		return False
 
 	@staticmethod
-	def find_groups(cards: [Card]):
+	def find_groups(cards: [Card]) -> [(chr, int)]:
 		# ranks
 		r = []
 		# groups
@@ -166,9 +176,9 @@ class HandUtils:
 		# c[i] = count
 		for i in tl:
 			if c[i] == 2:
-				g.append(('p', i))
+				g.append((2, i))
 			elif c[i] == 3:
-				g.append(('t', i))
+				g.append((3, i))
 			elif c[i] == 4:
-				g.append(('q', i))
+				g.append((4, i))
 		return g
