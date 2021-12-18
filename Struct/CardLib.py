@@ -1,4 +1,5 @@
 import random
+from collections import Counter
 from functools import cmp_to_key
 
 
@@ -92,21 +93,41 @@ class Deck:
 		return self.deal(no_players, no_cards)
 
 
-class HandRanker:
+class HandUtils:
 	@staticmethod
 	def rank_hand(hand: [Card]):
-		if HandRanker.is_royal_flush(hand):
+		if HandUtils.is_royal_flush(hand):
 			print("Royal Flush")
 			return 0
-		elif HandRanker.are_consecutive(hand) and HandRanker.share_suit(hand):
+		if HandUtils.are_consecutive(hand) and HandUtils.share_suit(hand):
 			print("Straight Flush")
 			return 1
+		gs = HandUtils.find_groups(hand)
 		# quads
+		if len(gs) == 1 and gs[0][0] == 'q':
+			print("Quads")
+			return 2
 		# full house
-		elif HandRanker.share_suit(hand):
+		if len(gs) == 2 and (gs[0][0] == 't' and gs[1][0] == 'p' or gs[0][0] == 'p' and gs[1][0] == 't'): # possible optimiasation
+			print("Full house")
+			return 3
+		if HandUtils.share_suit(hand):
 			print("Flush")
-		elif HandRanker.are_consecutive(hand):
-			print("straight")
+			return 4
+		if HandUtils.are_consecutive(hand):
+			print("Straight")
+			return 5
+		if len(gs) == 1 and gs[0][0] == 't':
+			print("Trips")
+			return 6
+		if len(gs) == 2 and gs[0][0] == 'p' and gs[1][0] == 'p' :
+			print("Two Pair")
+			return 7
+		if len(gs) == 1:
+			print("Pair")
+			return 8
+		print("High Card")
+		return 9
 
 	@staticmethod
 	def are_consecutive(cards: [Card]) -> bool:
@@ -126,7 +147,28 @@ class HandRanker:
 
 	@staticmethod
 	def is_royal_flush(cards: [Card]) -> bool:
-		if HandRanker.are_consecutive(cards) and HandRanker.share_suit(cards):
+		if HandUtils.are_consecutive(cards) and HandUtils.share_suit(cards):
 			if sorted(cards, key=cmp_to_key(lambda item1, item2: item1.get_rank_no() - item2.get_rank_no()))[0].get_rank_no() == 8:
 				return True
 		return False
+
+	@staticmethod
+	def find_groups(cards: [Card]):
+		# ranks
+		r = []
+		# groups
+		g = []
+		for card in cards:
+			r.append(card.get_rank_no())
+		c = Counter(r)
+		tl = list(dict.fromkeys(c.elements()))
+		# i = rank
+		# c[i] = count
+		for i in tl:
+			if c[i] == 2:
+				g.append(('p', i))
+			elif c[i] == 3:
+				g.append(('t', i))
+			elif c[i] == 4:
+				g.append(('q', i))
+		return g
