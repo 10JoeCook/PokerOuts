@@ -14,6 +14,27 @@ class Card:
 	def __int__(self) -> int:
 		return (self.rank * 4) + self.suit
 
+	def __eq__(self, other) -> bool:
+		return (self.rank, self.suit) == (other.rank, other.suit)
+
+	def __ne__(self, other) -> bool:
+		return (self.rank, self.suit) != (other.rank, other.suit)
+
+	def __lt__(self, other) -> bool:
+		return (self.rank, self.suit) < (other.rank, other.suit)
+
+	def __le__(self, other) -> bool:
+		return (self.rank, self.suit) <= (other.rank, other.suit)
+
+	def __gt__(self, other) -> bool:
+		return (self.rank, self.suit) > (other.rank, other.suit)
+
+	def __ge__(self, other) -> bool:
+		return (self.rank, self.suit) <= (other.rank, other.suit)
+
+	def __repr__(self):
+		return "%i %i" % (self.rank, self.suit)
+
 	def get_suit_no(self) -> int:
 		return self.suit
 
@@ -136,7 +157,7 @@ class HandUtils:
 			print("Quads")
 			return 2
 		# full house
-		if len(gs) == 2 and (gs[0][0] == 3 and gs[1][0] == 2 or gs[0][0] == 2 and gs[1][0] == 3):  # possible optimiasation
+		if len(gs) == 2 and (gs[0][0] == 3 and gs[1][0] == 2 or gs[0][0] == 2 and gs[1][0] == 3):  # possible optimisation
 			print("Full house")
 			return 3
 		if HandUtils.share_suit(hand):
@@ -237,5 +258,3 @@ class HandUtils:
 				i -= 1
 			i += 1
 		return r
-
-
