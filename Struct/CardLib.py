@@ -12,7 +12,7 @@ class Card:
 		return self.get_rank() + " of " + self.get_suit()
 
 	def __int__(self) -> int:
-		return (self.rank * 13) + self.rank
+		return (self.rank * 4) + self.suit
 
 	def get_suit_no(self) -> int:
 		return self.suit
@@ -110,6 +110,16 @@ class CardUtils:
 				highest_card = card
 		return highest_card
 
+	@staticmethod
+	def find_highest_x(cards: [Card], x: int) -> [Card]:
+		r = []
+		crds = cards.copy()
+		for i in range(x):
+			hc = CardUtils.find_highest(crds)
+			crds.remove(hc)
+			r.append(hc)
+		return r
+
 
 class HandUtils:
 	@staticmethod
@@ -122,11 +132,11 @@ class HandUtils:
 			return 1
 		gs = HandUtils.find_groups(hand)
 		# quads
-		if len(gs) == 1 and gs[0][0] == 'q':
+		if len(gs) == 1 and gs[0][0] == 4:
 			print("Quads")
 			return 2
 		# full house
-		if len(gs) == 2 and (gs[0][0] == 't' and gs[1][0] == 'p' or gs[0][0] == 'p' and gs[1][0] == 't'): # possible optimiasation
+		if len(gs) == 2 and (gs[0][0] == 3 and gs[1][0] == 2 or gs[0][0] == 2 and gs[1][0] == 3):  # possible optimiasation
 			print("Full house")
 			return 3
 		if HandUtils.share_suit(hand):
@@ -135,10 +145,10 @@ class HandUtils:
 		if HandUtils.are_consecutive(hand):
 			print("Straight")
 			return 5
-		if len(gs) == 1 and gs[0][0] == 't':
+		if len(gs) == 1 and gs[0][0] == 3:
 			print("Trips")
 			return 6
-		if len(gs) == 2 and gs[0][0] == 'p' and gs[1][0] == 'p' :
+		if len(gs) == 2 and gs[0][0] == 2 and gs[1][0] == 2:
 			print("Two Pair")
 			return 7
 		if len(gs) == 1:
@@ -190,3 +200,42 @@ class HandUtils:
 			elif c[i] == 4:
 				g.append((4, i))
 		return g
+
+	@staticmethod
+	def make_group_hand(cards: [Card], groups: [(chr, int)]) -> [(chr, int)]:
+		hand = []
+		s_groups = list(reversed(sorted(groups, key=lambda x: x[0])))
+		crds = cards.copy()
+		# quads
+		if s_groups[0][0] == 4:
+			hand += HandUtils.__remove_group(crds, s_groups[0])
+			hand.append(CardUtils.find_highest(crds))
+		# trips
+		if s_groups[0][0] == 3:
+			# pick best three of a kind
+			if s_groups[1] == 3 and s_groups[1][1] > s_groups[0][1]:
+				s_groups.remove(s_groups[0])
+			else:
+				s_groups.remove(s_groups[1])
+			hand += HandUtils.__remove_group(crds, s_groups[0])
+			if len(s_groups) > 2:
+				pass
+			elif len(s_groups) == 1:
+				pass
+			else:
+				hand += CardUtils.find_highest_x(crds, 2)
+		return hand
+
+	@staticmethod
+	def __remove_group(cards: [Card], group: ()) -> [Card]:
+		r = []
+		i = 0
+		while i < len(cards):
+			if cards[i].get_rank_no() == group[1]:
+				r.append(cards[i])
+				cards.remove(cards[i])
+				i -= 1
+			i += 1
+		return r
+
+
