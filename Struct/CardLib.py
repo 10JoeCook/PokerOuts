@@ -415,3 +415,20 @@ class HandUtils:
 				i -= 1
 			i += 1
 		return cards_cpy
+
+	@staticmethod
+	def make_flush_hand(cards: [Card]) -> [Card]:
+		hand = []
+		cards_cpy = cards.copy()
+		flush_suit = HandUtils.most_common_suit(cards_cpy)[0]
+		i = 0
+		while i < len(cards_cpy):
+			if cards_cpy[i].get_suit_no() != flush_suit:
+				cards_cpy.remove(cards_cpy[i])
+				i -= 1
+			i += 1
+		if len(cards_cpy) >= 5:
+			cards_cpy = list(sorted(cards_cpy, key=lambda x: (x.get_suit_no() * 13) + x.get_rank_no()))
+			for i in range(0, 5):
+				hand.append(cards_cpy[i])
+		return hand
