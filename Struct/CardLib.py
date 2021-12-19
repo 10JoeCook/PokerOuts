@@ -82,6 +82,12 @@ class Deck:
 		"""
 		return self.cards.pop()
 
+	def draw_x(self, x: int) -> [Card]:
+		ret = []
+		for i in range(x):
+			ret.append(Deck.draw(self))
+		return ret
+
 	def deal(self, no_hands: int, no_cards: int) -> [[Card]]:
 		"""Deal hands of x size to y players
 		:param no_hands: number of hands to deal
@@ -90,10 +96,7 @@ class Deck:
 		"""
 		hands = []
 		for i in range(no_hands):
-			hand = []
-			for j in range(no_cards):
-				hand.append(self.draw())
-			hands.append(hand)
+			hands.append(Deck.draw_x(self, no_cards))
 		return hands
 
 	def setup(self, no_players: int, no_cards: int) -> [[Card]]:
