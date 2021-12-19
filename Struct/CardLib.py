@@ -371,3 +371,45 @@ class HandUtils:
 				i -= 1
 			i += 1
 		return ret
+
+	@staticmethod
+	def make_straight_hand(cards: [Card]) -> [Card]:
+		cards_cpy = list(sorted(cards.copy(), key=lambda x: int(x)))
+		cards_cpy = HandUtils.remove_duplicate_ranks(cards_cpy)
+		if len(cards_cpy) >= 5:
+			possible_straights = [0] * (len(cards_cpy) - 4)
+			for i in range(len(possible_straights)):
+				if HandUtils.are_consecutive(cards_cpy[0 + i:5 + i]):
+					possible_straights[i] = 1
+			for i in range(len(possible_straights) - 1, -1, -1):
+				if possible_straights[i] == 1:
+					return cards_cpy[0 + i:5 + i]
+		return []
+
+	@staticmethod
+	def most_common_suit(cards: [Card]) -> (int, int):
+		ret = 0
+		suits = [0, 0, 0, 0]
+		for card in cards:
+			suits[card.get_suit_no()] += 1
+		most_common = suits[ret]
+		for i in range(len(suits)):
+			if suits[i] > most_common:
+				ret = i
+				most_common = suits[i]
+		return ret, most_common
+
+	@staticmethod
+	def remove_duplicate_ranks(cards: [Card]) -> [Card]:
+		i = 0
+		cards_cpy = cards.copy()
+		straight_flush_suit = HandUtils.most_common_suit(cards_cpy)[0]
+		while i < len(cards_cpy) - 2:
+			if cards_cpy[i].get_rank_no() == cards_cpy[i + 1].get_rank_no():
+				if cards_cpy[i].get_suit_no() == straight_flush_suit:
+					cards_cpy.remove(cards_cpy[i + 1])
+				else:
+					cards_cpy.remove(cards_cpy[i])
+				i -= 1
+			i += 1
+		return cards_cpy
