@@ -333,19 +333,26 @@ class HandUtils:
 		# trips
 		if sorted_groups[0][0] == 3:
 			# pick best three of a kind
-			if sorted_groups[1] == 3 and sorted_groups[1][1] > sorted_groups[0][1]:
-				sorted_groups.remove(sorted_groups[0])
-			else:
-				sorted_groups.remove(sorted_groups[1])
-			hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
-			if len(sorted_groups) > 2:
-				pass
-				# TODO:IMPLEMENT picking teo best pair
-			elif len(sorted_groups) > 1:
-				pass
-				# TODO: IMPLEMENT append pair other cards
-			else:
+			if len(sorted_groups) == 1:
+				hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
 				hand += CardUtils.find_highest_x(cards_cpy, 2)
+			elif len(sorted_groups) == 2 and sorted_groups[1] == 3:
+				if sorted_groups[0][1] > sorted_groups[1][1]:
+					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
+					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
+				else:
+					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
+					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
+				hand.remove(hand[-1])
+			elif len(sorted_groups) == 2:
+				hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
+				hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
+			elif len(sorted_groups) == 3 and sorted_groups[1][0] == 2 and sorted_groups[2][0] == 2:
+				hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
+				if sorted_groups[1][1] > sorted_groups[2][1]:
+					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
+				else:
+					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[2])
 		return hand
 
 	@staticmethod
