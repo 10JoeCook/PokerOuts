@@ -317,42 +317,44 @@ class HandUtils:
 		return groups
 
 	@staticmethod
-	def make_group_hand(cards: [Card], groups: [(chr, int)]) -> [(chr, int)]:
+	def make_group_hand(cards: [Card]) -> [(chr, int)]:
 		"""Form a five card hand from a set of 7 cards (hand + table cards) that contains groups
 		:param cards: 7 cards (hand + table)
 		:param groups: groups present within the cards
 		:return: 5 card hand with the best groups
 		"""
 		hand = []
-		sorted_groups = list(reversed(sorted(groups, key=lambda x: x[0])))
 		cards_cpy = cards.copy()
-		# quads
-		if sorted_groups[0][0] == 4:
-			hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
-			hand.append(CardUtils.find_highest(cards_cpy))
-		# trips
-		if sorted_groups[0][0] == 3:
-			# pick best three of a kind
-			if len(sorted_groups) == 1:
+		groups = HandUtils.find_groups(cards_cpy)
+		sorted_groups = list(reversed(sorted(groups, key=lambda x: x[0])))
+		if len(sorted_groups) != 0:
+			# quads
+			if sorted_groups[0][0] == 4:
 				hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
-				hand += CardUtils.find_highest_x(cards_cpy, 2)
-			elif len(sorted_groups) == 2 and sorted_groups[1] == 3:
-				if sorted_groups[0][1] > sorted_groups[1][1]:
+				hand.append(CardUtils.find_highest(cards_cpy))
+			# trips
+			if sorted_groups[0][0] == 3:
+				# pick best three of a kind
+				if len(sorted_groups) == 1:
+					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
+					hand += CardUtils.find_highest_x(cards_cpy, 2)
+				elif len(sorted_groups) == 2 and sorted_groups[1] == 3:
+					if sorted_groups[0][1] > sorted_groups[1][1]:
+						hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
+						hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
+					else:
+						hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
+						hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
+					hand.remove(hand[-1])
+				elif len(sorted_groups) == 2:
 					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
 					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
-				else:
-					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
+				elif len(sorted_groups) == 3 and sorted_groups[1][0] == 2 and sorted_groups[2][0] == 2:
 					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
-				hand.remove(hand[-1])
-			elif len(sorted_groups) == 2:
-				hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
-				hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
-			elif len(sorted_groups) == 3 and sorted_groups[1][0] == 2 and sorted_groups[2][0] == 2:
-				hand += HandUtils.__remove_group(cards_cpy, sorted_groups[0])
-				if sorted_groups[1][1] > sorted_groups[2][1]:
-					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
-				else:
-					hand += HandUtils.__remove_group(cards_cpy, sorted_groups[2])
+					if sorted_groups[1][1] > sorted_groups[2][1]:
+						hand += HandUtils.__remove_group(cards_cpy, sorted_groups[1])
+					else:
+						hand += HandUtils.__remove_group(cards_cpy, sorted_groups[2])
 		return hand
 
 	@staticmethod
