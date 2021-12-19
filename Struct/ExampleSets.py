@@ -1,4 +1,4 @@
-from Struct.CardLib import *
+from Struct.CardLib import Card
 
 # Five Card Hands
 high_card =     [Card(0, 9), Card(1, 5), Card(0, 3), Card(3, 6), Card(2, 12)]
