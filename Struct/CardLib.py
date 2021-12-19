@@ -218,42 +218,44 @@ class HandUtils:
 		:param hand: 5 card hand to rank
 		:return: tuple containing hand rank and extra factors ordered as per table
 		"""
-		hand_cpy = hand.copy()
-		if HandUtils.is_royal_flush(hand_cpy):
-			return 0, hand_cpy[0].get_suit_no()
-		if HandUtils.are_consecutive(hand_cpy) and HandUtils.share_suit(hand_cpy):
-			highest_card = CardUtils.find_highest(hand_cpy)
-			return 1, highest_card.get_rank_no()
-		groups = HandUtils.find_groups(hand_cpy)
-		if len(groups) == 1 and groups[0][0] == 4:
-			HandUtils.__remove_group(hand_cpy, groups[0])
-			highest_card = CardUtils.find_highest(hand_cpy)
-			return 2, groups[0][1], highest_card.get_rank_no()
-		# possible optimisation?
-		if len(groups) == 2 and ((groups[0][0] == 3 and groups[1][0] == 2) or (groups[0][0] == 2 and groups[1][0] == 3)):
-			return 3, groups[0][1], groups[1][1]
-		if HandUtils.share_suit(hand_cpy):
-			highest_card = CardUtils.find_highest(hand_cpy)
-			return 4, highest_card.get_rank_no()
-		if HandUtils.are_consecutive(hand_cpy):
-			highest_card = CardUtils.find_highest(hand_cpy)
-			return 5, highest_card.get_rank_no()
-		if len(groups) == 1 and groups[0][0] == 3:
-			HandUtils.__remove_group(hand_cpy, groups[0])
-			highest_cards = CardUtils.find_highest_x(hand_cpy, 2)
-			return 6, groups[0][1], highest_cards[0].get_rank_no(), highest_cards[1].get_rank_no()
-		if len(groups) == 2 and groups[0][0] == 2 and groups[1][0] == 2:
-			HandUtils.__remove_group(hand_cpy, groups[0])
-			HandUtils.__remove_group(hand_cpy, groups[1])
-			highest_card = CardUtils.find_highest(hand_cpy)
-			return 7, groups[0][1], groups[1][1], highest_card.get_rank_no()
-		if len(groups) == 1:
-			HandUtils.__remove_group(hand_cpy, groups[0])
-			highest_cards = CardUtils.find_highest_x(hand_cpy, 3)
-			return 8, groups[0][1], highest_cards[0].get_rank_no(), highest_cards[1].get_rank_no(), highest_cards[2].get_rank_no()
-		# if no hands are found, return 9 representing a high card
-		highest_cards = CardUtils.find_highest_x(hand_cpy, 5)
-		return 9, highest_cards[0].get_rank_no(), highest_cards[1].get_rank_no(), highest_cards[2].get_rank_no(), highest_cards[3].get_rank_no(), highest_cards[4].get_rank_no()
+		if hand:
+			hand_cpy = hand.copy()
+			if HandUtils.is_royal_flush(hand_cpy):
+				return 0, hand_cpy[0].get_suit_no()
+			if HandUtils.are_consecutive(hand_cpy) and HandUtils.share_suit(hand_cpy):
+				highest_card = CardUtils.find_highest(hand_cpy)
+				return 1, highest_card.get_rank_no()
+			groups = HandUtils.find_groups(hand_cpy)
+			if len(groups) == 1 and groups[0][0] == 4:
+				HandUtils.__remove_group(hand_cpy, groups[0])
+				highest_card = CardUtils.find_highest(hand_cpy)
+				return 2, groups[0][1], highest_card.get_rank_no()
+			# possible optimisation?
+			if len(groups) == 2 and ((groups[0][0] == 3 and groups[1][0] == 2) or (groups[0][0] == 2 and groups[1][0] == 3)):
+				return 3, groups[0][1], groups[1][1]
+			if HandUtils.share_suit(hand_cpy):
+				highest_card = CardUtils.find_highest(hand_cpy)
+				return 4, highest_card.get_rank_no()
+			if HandUtils.are_consecutive(hand_cpy):
+				highest_card = CardUtils.find_highest(hand_cpy)
+				return 5, highest_card.get_rank_no()
+			if len(groups) == 1 and groups[0][0] == 3:
+				HandUtils.__remove_group(hand_cpy, groups[0])
+				highest_cards = CardUtils.find_highest_x(hand_cpy, 2)
+				return 6, groups[0][1], highest_cards[0].get_rank_no(), highest_cards[1].get_rank_no()
+			if len(groups) == 2 and groups[0][0] == 2 and groups[1][0] == 2:
+				HandUtils.__remove_group(hand_cpy, groups[0])
+				HandUtils.__remove_group(hand_cpy, groups[1])
+				highest_card = CardUtils.find_highest(hand_cpy)
+				return 7, groups[0][1], groups[1][1], highest_card.get_rank_no()
+			if len(groups) == 1:
+				HandUtils.__remove_group(hand_cpy, groups[0])
+				highest_cards = CardUtils.find_highest_x(hand_cpy, 3)
+				return 8, groups[0][1], highest_cards[0].get_rank_no(), highest_cards[1].get_rank_no(), highest_cards[2].get_rank_no()
+			# if no hands are found, return 9 representing a high card
+			highest_cards = CardUtils.find_highest_x(hand_cpy, 5)
+			return 9, highest_cards[0].get_rank_no(), highest_cards[1].get_rank_no(), highest_cards[2].get_rank_no(), highest_cards[3].get_rank_no(), highest_cards[4].get_rank_no()
+		return ()
 
 	@staticmethod
 	def are_consecutive(cards: [Card]) -> bool:
@@ -432,3 +434,19 @@ class HandUtils:
 			for i in range(0, 5):
 				hand.append(cards_cpy[i])
 		return hand
+
+	@staticmethod
+	def make_hand(cards: [Card]) -> [Card]:
+		hands = [HandUtils.make_straight_hand(cards), HandUtils.make_flush_hand(cards), HandUtils.make_group_hand(cards)]
+		ranks = []
+		top_rank = (999, 999)
+		for hand in hands:
+			rank = HandUtils.rank_hand(hand)
+			ranks.append(rank)
+			if rank != () and rank < top_rank:
+				top_rank = rank
+		if top_rank != (999, 999):
+			for i in range(len(ranks)):
+				if ranks[i] == top_rank:
+					return hands[i]
+		return list(reversed(sorted(cards.copy(), key=lambda x: int(x))))[0:5]
